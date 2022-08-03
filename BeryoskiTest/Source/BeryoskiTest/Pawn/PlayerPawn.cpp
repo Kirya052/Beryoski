@@ -8,6 +8,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/ArrowComponent.h"
 #include "AbilitySystem/BTAbilitySystemComponent.h"
+#include "UMG/ScoreUserWidget.h"
+#include "BTGameInstance.h"
 
 
 APlayerPawn::APlayerPawn()
@@ -60,6 +62,10 @@ void APlayerPawn::CancelMovementAbility()
 
 void APlayerPawn::RotateRight(float Value)
 {
+	if (!bCanActivateSpecialAbility)
+	{
+		return;
+	}
 	FRotator ArrowRotation = ArrowComponent->GetRelativeRotation();
 	FRotator NewRotation = ArrowRotation + FRotator(0.0f, Value, 0.0f);
 	ArrowComponent->SetWorldRotation(FMath::Lerp(NewRotation, ArrowRotation, 0.1f));
@@ -86,9 +92,44 @@ void APlayerPawn::SpecialAbility()
 	AbilitySystemComponent->TryActivateAbilityWithTag(SpecialAbilityTag);
 }
 
+void APlayerPawn::AddScore()
+{
+	Score++;
+	if (ScoreWidget)
+	{
+		ScoreWidget->UpdateScore(Score);
+	}
+}
+
 UAbilitySystemComponent* APlayerPawn::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void APlayerPawn::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	InitializeScoreAndPosition();
+	
+	if (ScoreWidgetClass)
+	{
+		ScoreWidget = CreateWidget<UScoreUserWidget>(GetWorld(), ScoreWidgetClass);
+		if (ScoreWidget)
+		{
+			ScoreWidget->AddToPlayerScreen();
+		}
+	}
+}
+
+void APlayerPawn::InitializeScoreAndPosition()
+{
+	UBTGameInstance* GameInstance = Cast<UBTGameInstance>(GetWorld()->GetGameInstance());
+	if (GameInstance)
+	{
+		Score = GameInstance->Score;
+		GameInstance->PawnLocation = GetActorLocation();
+	}
 }
 
 void APlayerPawn::InitGameplayAbilitySystem(AController* NewController)

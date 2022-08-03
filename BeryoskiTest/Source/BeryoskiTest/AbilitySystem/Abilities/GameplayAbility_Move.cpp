@@ -30,11 +30,12 @@ void UGameplayAbility_Move::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 void UGameplayAbility_Move::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
 {
+	GetWorld()->GetTimerManager().ClearTimer(ForceTimer);
+
 	APlayerPawn* CachedPawn = StaticCast<APlayerPawn*>(ActorInfo->AvatarActor.Get());
 	USphereComponent* SphereCollision = CachedPawn->GetRootSphere();
 
 	FVector forwardVector = CachedPawn->GetArrowComponent()->GetForwardVector();
-	GetWorld()->GetTimerManager().ClearTimer(ForceTimer);
 	FVector ForceVector = forwardVector * ForceMultiply * Force;
 	SphereCollision->AddForce(ForceVector, NAME_None, true);
 
