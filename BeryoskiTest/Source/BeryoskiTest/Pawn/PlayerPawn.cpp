@@ -118,6 +118,7 @@ void APlayerPawn::BeginPlay()
 		if (ScoreWidget)
 		{
 			ScoreWidget->AddToPlayerScreen();
+			ScoreWidget->UpdateScore(Score);
 		}
 	}
 }

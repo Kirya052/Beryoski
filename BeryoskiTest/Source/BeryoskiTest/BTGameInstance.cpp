@@ -6,7 +6,7 @@
 FName UBTGameInstance::GetNextLevelName()
 {
 	LevelIndex++;
-	if (LevelIndex > LevelList.Num())
+	if (LevelIndex >= LevelList.Num())
 	{
 		return FName();
 	}

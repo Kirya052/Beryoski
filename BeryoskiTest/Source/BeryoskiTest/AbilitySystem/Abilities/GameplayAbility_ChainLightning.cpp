@@ -29,7 +29,7 @@ void UGameplayAbility_ChainLightning::ActivateAbility(const FGameplayAbilitySpec
 	PlayerPawn = StaticCast<APlayerPawn*>(OwnerInfo->AvatarActor.Get());
 	PlayerPawn->bCanActivateSpecialAbility = false;
 	TracePosition = PlayerPawn->GetActorLocation();
-	TraceRotation = PlayerPawn->GetActorRotation();
+	TraceRotation = PlayerPawn->GetArrowComponent()->GetComponentRotation();
 
 	GetWorld()->GetTimerManager().SetTimer(TraceTimer, this, &UGameplayAbility_ChainLightning::StartLightning, 0.00001f, true, 0.0f);
 	GetWorld()->GetTimerManager().SetTimer(DamageTimer, this, &UGameplayAbility_ChainLightning::TakeDamage, DamageTime, true, 0.1f);
